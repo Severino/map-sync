@@ -9,8 +9,9 @@ import '../../main.css';
 import { createApp } from 'vue';
 import { createPluginPolyfill } from './plugin-polyfill';
 import { createPinia } from 'pinia';
-import router from './router';
 
+import router from './router';
+import { i18n } from './i18n.js';
 
 setTimeout(() => {
     import('../../main.js').then((module) => {
@@ -22,6 +23,7 @@ createPluginPolyfill();
 const app = createApp(App);
 
 app.use(createPinia());
+app.use(i18n);
 app.use(router);
 
 app.mount('#app');

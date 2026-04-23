@@ -34,7 +34,7 @@ export default defineConfig({
             fileName: (format) => `${pluginName.toLowerCase()}.${format}.js`
         },
         rollupOptions: {
-            external: ['vue'],
+            external: ['vue', 'bootstrap'],
             output: {
                 globals: {
                     vue: 'Vue'

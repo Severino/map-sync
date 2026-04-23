@@ -21,7 +21,7 @@
                 aria-current="page"
                 href="#"
                 @click.prevent="() => store.setActiveTab(tab)"
-            >{{ tab.label }}</a>
+            >{{ t(tab.label) }}</a>
         </li>
     </ul>
     <component
@@ -49,7 +49,10 @@
                 };
             });
 
+            const t = SpPS?.data?.t || ((key) => key);
+
             return {
+                t,
                 store,
                 pillClass,
             };
@@ -57,4 +60,7 @@
     };
 </script>
 
-<style lang='scss' scoped></style>
+<style
+    lang='scss'
+    scoped
+></style>

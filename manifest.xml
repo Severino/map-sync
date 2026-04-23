@@ -1,36 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <info>
     <!-- Must match id in JS SpPS.register call in kebab-case -->
-    <name>Template</name>
-    <title>Template Plugin</title>
-    <description>Base template for creating Plugins for Spacialist.</description>
+    <name>MapSync</name>
+    <title>Map Sync Plugin</title>
+    <description>Spacialist Plugin for syncing locations based on a geometry attribute.</description>
     <version>1.0.0</version>
     <licence>MIT</licence>
     <authors>
         <author>Severin Opel</author>
     </authors>
     <compatibility>
-        <spacialist></spacialist>
+        <spacialist>
+            <version>^0.10.0</version>
+        </spacialist>
         <php></php>
     </compatibility>
     <dependencies>
-        <!-- Other plugins this plugin depends on -->
+        <Map />
     </dependencies>
-    <permissions>
-        <!-- Other requirements this plugin depends on -->
-        <!-- <client /> -->
-        <!-- <migration /> -->
-        <!-- <routes /> -->
-        <!-- <public /> -->
-        <attributes />
-        <components />
-    </permissions>
-    <attributes>
-        <!-- Attribute names must start with their plugin name -->
-        <attribute type="attribute" src="Attributes\TemplateAttribute" />
-    </attributes>
-    <components>
-        <!-- Attribute names must start with their plugin name -->
-        <component name="TemplateAttribute" src="src/components/Attribute.vue" />
-    </components>
 </info>

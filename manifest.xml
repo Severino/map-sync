@@ -3,7 +3,7 @@
     <!-- Must match id in JS SpPS.register call in kebab-case -->
     <name>MapSync</name>
     <title>Map Sync Plugin</title>
-    <description>Spacialist Plugin for syncing locations based on a geometry attribute.</description>
+    <description>Spacialist Plugin for syncing map geometries based on a geometry attribute.</description>
     <version>1.0.0</version>
     <licence>MIT</licence>
     <authors>

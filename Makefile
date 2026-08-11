@@ -3,8 +3,9 @@ lib_dir=./lib
 dst_dir=./dist
 build_dir=./build
 build_src=./build/src
-package_name=$(shell node -p -e "require('./package.json').name")
-package_root=$(shell node -p -e "require('./package.json').pluginName")
+plugin_name=$(shell node -p -e "require('./package.json').pluginName")
+plugin_name_loser=$(shell node -p -e "require('./package.json').pluginName.toLowerCase()")
+plugin_version=$(shell node -p -e "require('./package.json').version")
 
 # all steps for an appstore release
 release: npm_init npm_build package
@@ -26,19 +27,19 @@ clean:
 package: clean
 	mkdir $(build_dir)
 	mkdir $(build_src)
-	mkdir $(build_src)/$(package_root)
+	mkdir $(build_src)/$(plugin_name)
 	# Copy directories if they exist
-	[ -d App ] && rsync -zah App $(build_src)/$(package_root)/ || true
-	[ -d Attributes ] && rsync -zah Attributes $(build_src)/$(package_root)/ || true
-	[ -d Controllers ] && rsync -zah Controllers $(build_src)/$(package_root)/ || true
-	[ -d Migration ] && rsync -zah Migration $(build_src)/$(package_root)/ || true
-	[ -d routes ] && rsync -zah routes $(build_src)/$(package_root)/ || true
+	[ -d App ] && rsync -zah App $(build_src)/$(plugin_name)/ || true
+	[ -d Attributes ] && rsync -zah Attributes $(build_src)/$(plugin_name)/ || true
+	[ -d Controllers ] && rsync -zah Controllers $(build_src)/$(plugin_name)/ || true
+	[ -d Migration ] && rsync -zah Migration $(build_src)/$(plugin_name)/ || true
+	[ -d routes ] && rsync -zah routes $(build_src)/$(plugin_name)/ || true
 	# Copy files if they exist
-	[ -f $(dst_dir)/$(package_name).umd.js ] && cp $(dst_dir)/$(package_name).umd.js $(build_src)/$(package_root)/ || true
-	[ -f $(root_dir)/CHANGELOG.md ] && cp $(root_dir)/CHANGELOG.md $(build_src)/$(package_root)/ || true
-	mkdir -p $(build_src)/$(package_root)/js
-	[ -f $(build_src)/$(package_root)/$(package_name).umd.js ] && mv $(build_src)/$(package_root)/$(package_name).umd.js $(build_src)/$(package_root)/js/script.js || true
-	tar -czf $(build_dir)/$(package_name).tar.gz \
-	   --directory="$(build_src)" $(package_root)
-	(cd $(build_src) && zip ../$(package_name).zip -r .)
+	[ -f $(dst_dir)/$(plugin_name).umd.js ] && cp $(dst_dir)/$(plugin_name).umd.js $(build_src)/$(plugin_name)/ || true
+	[ -f $(root_dir)/CHANGELOG.md ] && cp $(root_dir)/CHANGELOG.md $(build_src)/$(plugin_name)/ || true
+	mkdir -p $(build_src)/$(plugin_name)/js
+	[ -f $(build_src)/$(plugin_name)/$(plugin_name).umd.js ] && mv $(build_src)/$(plugin_name)/$(plugin_name).umd.js $(build_src)/$(plugin_name)/js/script.js || true
+	tar -czf $(build_dir)/$(plugin_name).tar.gz \
+	   --directory="$(build_src)" $(plugin_name)
+	(cd $(build_src) && zip ../$(plugin_name)_$(plugin_version).zip -r .)
 	rm -rf $(build_src)

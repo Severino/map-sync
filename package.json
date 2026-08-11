@@ -1,7 +1,7 @@
 {
-    "name": "spacialist_plugin_template",
-    "pluginName": "Template",
-    "description": "A template for creating Spacialist plugins.",
+    "name": "spacialist_plugin_map_sync",
+    "pluginName": "MapSync",
+    "description": "Spacialist Plugin for syncing map geometries based on a geometry attribute",
     "private": true,
     "type": "module",
     "scripts": {

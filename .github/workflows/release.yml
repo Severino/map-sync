@@ -1,0 +1,113 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+# Releases must happen sequentially.
+# Otherwise two pushes to main could calculate the same version.
+concurrency:
+  group: release-main
+  queue: max
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Ignore release commits
+        id: release_commit
+        run: |
+          if git log -1 --format=%s | grep -q '^chore(release):'; then
+            echo "is_release_commit_generated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_release_commit_generated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Node.js
+        if: steps.release_commit.outputs.is_release_commit_generated == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Calculate version
+        if: steps.release_commit.outputs.is_release_commit_generated == 'false'
+        id: version
+        run: node scripts/version-release.js
+
+      - name: Stop if no release is required
+        if: |
+          steps.release_commit.outputs.is_release_commit_generated == 'false' &&
+          steps.version.outputs.released != 'true'
+        run: |
+          echo "No release-worthy commits."
+          exit 0
+
+      - name: Build
+        if: |
+          steps.release_commit.outputs.is_release_commit_generated == 'false' &&
+          steps.version.outputs.released == 'true'
+        run: make
+
+      - name: Commit version
+        if: |
+          steps.release_commit.outputs.is_release_commit_generated == 'false' &&
+          steps.version.outputs.released == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          git add package.json manifest.xml
+
+          git commit \
+            -m "chore(release): ${VERSION}"
+
+      - name: Create tag
+        if: |
+          steps.release_commit.outputs.is_release_commit_generated == 'false' &&
+          steps.version.outputs.released == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          git tag \
+            -a "v${VERSION}" \
+            -m "Release ${VERSION}"
+
+      - name: Push release
+        if: |
+          steps.release_commit.outputs.is_release_commit_generated == 'false' &&
+          steps.version.outputs.released == 'true'
+        run: |
+          git push origin HEAD:main
+          git push origin "v${{ steps.version.outputs.version }}"
+
+      - name: Summary
+        if: |
+          steps.release_commit.outputs.is_release_commit_generated == 'false' &&
+          steps.version.outputs.released == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          {
+            echo "## Release ${VERSION}"
+            echo
+            echo "- Version: \`${VERSION}\`"
+            echo "- Bump: \`${{ steps.version.outputs.bump }}\`"
+            echo "- Tag: \`v${VERSION}\`"
+            echo "- Build: successful"
+          } >> "$GITHUB_STEP_SUMMARY"

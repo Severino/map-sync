@@ -386,7 +386,6 @@ async function callLinkFolders() {
 
 async function callLinkJs() {
     startSection('Link js folder');
-
     const srcPath = await getUmdFilePath();
     try {
         await fs.readFile(srcPath);
@@ -500,7 +499,7 @@ async function getPackageJsonValues() {
 
     return {
         name: packageJson.name,
-        pluginName: packageJson.plugin_name,
+        pluginName: packageJson.pluginName,
         version: packageJson.version,
         description: packageJson.description,
         missingFields,

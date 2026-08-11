@@ -1,16 +1,20 @@
-# Spacialist Plugin Template
+# Map Sync
 
-This template is meant as a starting point for Plugin Development. It is setup to work out of the box with spacialist and has a lot of developer tooling already setup, so that you don't have to setup anything on your own and you can start developing right away.
+Plugin to sync a WKT column of an entity type with the geometry on the map.
 
-## Setup for Development
+## Usage
 
-To setup the plugin to be ready for development follow these steps:
+After installing the plugin, a new Tab will be added. Here you can select
+an entity type and an Attribute. When pressing generate all attached geodata
+will be updated to the new WKT.
 
-1. Clone this repository into the spacialist plugin folder `app/Plugins`
-2. Install node modules `npm install`
-2. Run the setup script `node dev.mjs` **Note using windows you must open the shell as administrator**
-2. Run spacialist and the plugin. Most easily done by running the 'dev' task from vscode.
-2. Enable plugin in spacialist.
-2. Develop!
+## Commit conventions
 
-
+| Commit | Version change |
+|--------|---|
+| fix: correct login | 1.4.2 → 1.4.3 |
+| feat: add export | 1.4.3 → 1.5.0 |
+| feat!: replace API | 1.5.0 → 2.0.0 |
+| fix!: change configuration format | major |
+| docs: update README | no release |
+| chore: update dependencies | no release |

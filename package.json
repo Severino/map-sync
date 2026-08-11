@@ -21,7 +21,7 @@
         "vue-i18n": "^11.3.2",
         "vue-router": "^4.5.0"
     },
-    "version": "1.1.0",
+    "version": "1.1.1",
     "dependencies": {
         "dhc-components": "github:DH-Center-Tuebingen/dhc-components",
         "pg-promise": "^11.13.0",

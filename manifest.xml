@@ -4,7 +4,7 @@
     <name>MapSync</name>
     <title>Map Sync Plugin</title>
     <description>Spacialist Plugin for syncing map geometries based on a geometry attribute.</description>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <licence>MIT</licence>
     <authors>
         <author>Severin Opel</author>

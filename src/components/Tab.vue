@@ -81,8 +81,7 @@
 </template>
 
 <script setup>
-    import { nextTick } from 'process';
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
     import { LoadingButton } from 'dhc-components';
 

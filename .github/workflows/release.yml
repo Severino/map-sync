@@ -49,7 +49,7 @@ jobs:
       - name: Calculate version
         if: steps.release_commit.outputs.is_release_commit_generated == 'false'
         id: version
-        run: node scripts/version-release.js
+        run: node scripts/version-release.cjs
 
       - name: Stop if no release is required
         if: |

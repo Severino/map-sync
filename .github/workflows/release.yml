@@ -111,3 +111,23 @@ jobs:
             echo "- Tag: \`v${VERSION}\`"
             echo "- Build: successful"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create GitHub Release
+        if: |
+          steps.release_commit.outputs.is_release_commit_generated == 'false' &&
+          steps.version.outputs.released == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ZIP="build/MapSync_${VERSION}.zip"
+
+          if [ ! -f "$ZIP" ]; then
+            echo "Release archive not found: $ZIP"
+            exit 1
+          fi
+
+          gh release create "v${VERSION}" \
+            "$ZIP" \
+            --title "Map Sync ${VERSION}" \
+            --generate-notes

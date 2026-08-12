@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const { execSync } = require("child_process");
+const fs = require('fs');
+const { execSync } = require('child_process');
 
 function git(command) {
     return execSync(command, {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "inherit"],
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'inherit'],
     }).trim();
 }
 
 function getLatestTag() {
     try {
         return git(
-            "git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]*' --abbrev=0"
+            'git describe --tags --match "v[0-9]*.[0-9]*.[0-9]*" --abbrev=0'
         );
     } catch {
         return null;
@@ -21,7 +21,7 @@ function getLatestTag() {
 }
 
 function getCommitsSince(tag) {
-    const range = tag ? `${tag}..HEAD` : "HEAD";
+    const range = tag ? `${tag}..HEAD` : 'HEAD';
 
     // %B includes the complete commit message, including
     // BREAKING CHANGE declarations in the commit body.
@@ -30,11 +30,11 @@ function getCommitsSince(tag) {
 
 function getVersion() {
     const packageJson = JSON.parse(
-        fs.readFileSync("package.json", "utf8")
+        fs.readFileSync('package.json', 'utf8')
     );
 
     if(!packageJson.version) {
-        throw new Error("package.json does not contain a version");
+        throw new Error('package.json does not contain a version');
     }
 
     return packageJson.version;
@@ -45,7 +45,7 @@ function parseVersion(version) {
 
     if(!match) {
         throw new Error(
-            `Unsupported version "${version}". Expected MAJOR.MINOR.PATCH.`
+            `Unsupported version '${version}'. Expected MAJOR.MINOR.PATCH.`
         );
     }
 
@@ -57,9 +57,9 @@ function parseVersion(version) {
 }
 
 function determineBump(commits) {
-    let bump = "none";
+    let bump = 'none';
 
-    const lines = commits.split("\n");
+    const lines = commits.split('\n');
 
     for(const line of lines) {
         const subject = line.trim();
@@ -70,7 +70,7 @@ function determineBump(commits) {
 
         // A commit containing BREAKING CHANGE is a major release.
         if(/^BREAKING CHANGE:/i.test(subject)) {
-            return "major";
+            return 'major';
         }
 
         // Conventional Commit with !:
@@ -80,13 +80,13 @@ function determineBump(commits) {
         // feat(api)!: ...
         //
         if(/^[a-zA-Z]+(\([^)]*\))?!:/.test(subject)) {
-            return "major";
+            return 'major';
         }
 
         // Feature → minor release.
         if(/^feat(\([^)]*\))?:/.test(subject)) {
-            if(bump !== "major") {
-                bump = "minor";
+            if(bump !== 'major') {
+                bump = 'minor';
             }
 
             continue;
@@ -94,8 +94,8 @@ function determineBump(commits) {
 
         // Fix → patch release.
         if(/^fix(\([^)]*\))?:/.test(subject)) {
-            if(bump === "none") {
-                bump = "patch";
+            if(bump === 'none') {
+                bump = 'patch';
             }
         }
     }
@@ -107,16 +107,16 @@ function incrementVersion(version, bump) {
     const parsed = parseVersion(version);
 
     switch(bump) {
-        case "major":
+        case 'major':
             return `${parsed.major + 1}.0.0`;
 
-        case "minor":
+        case 'minor':
             return `${parsed.major}.${parsed.minor + 1}.0`;
 
-        case "patch":
+        case 'patch':
             return `${parsed.major}.${parsed.minor}.${parsed.patch + 1}`;
 
-        case "none":
+        case 'none':
             return version;
 
         default:
@@ -125,31 +125,31 @@ function incrementVersion(version, bump) {
 }
 
 function updatePackageJson(version) {
-    const filename = "package.json";
+    const filename = 'package.json';
 
     const packageJson = JSON.parse(
-        fs.readFileSync(filename, "utf8")
+        fs.readFileSync(filename, 'utf8')
     );
 
     packageJson.version = version;
 
     fs.writeFileSync(
         filename,
-        JSON.stringify(packageJson, null, 4) + "\n"
+        JSON.stringify(packageJson, null, 4) + '\n'
     );
 }
 
 function updateManifest(version) {
-    const filename = "manifest.xml";
+    const filename = 'plugin.xml';
 
-    let manifest = fs.readFileSync(filename, "utf8");
+    let manifest = fs.readFileSync(filename, 'utf8');
 
     const versionElement =
         /(<version>\s*)\d+\.\d+\.\d+(\s*<\/version>)/;
 
     if(!versionElement.test(manifest)) {
         throw new Error(
-            "Could not find <version>MAJOR.MINOR.PATCH</version> in manifest.xml"
+            'Could not find <version>MAJOR.MINOR.PATCH</version> in plugin.xml'
         );
     }
 
@@ -166,34 +166,34 @@ function main() {
     const latestTag = getLatestTag();
 
     console.log(`Current version: ${currentVersion}`);
-    console.log(`Latest release tag: ${latestTag || "(none)"}`);
+    console.log(`Latest release tag: ${latestTag || '(none)'}`);
 
     const commits = getCommitsSince(latestTag);
 
     if(!commits) {
-        console.log("No commits since the last release.");
+        console.log('No commits since the last release.');
 
         fs.appendFileSync(
-            process.env.GITHUB_OUTPUT || "/dev/null",
-            "released=false\n"
+            process.env.GITHUB_OUTPUT || '/dev/null',
+            'released=false\n'
         );
 
         return;
     }
 
-    console.log("\nCommits since last release:");
+    console.log('\nCommits since last release:');
     console.log(commits);
 
     const bump = determineBump(commits);
 
     console.log(`\nRequired version bump: ${bump}`);
 
-    if(bump === "none") {
-        console.log("No release-worthy commits found.");
+    if(bump === 'none') {
+        console.log('No release-worthy commits found.');
 
         fs.appendFileSync(
-            process.env.GITHUB_OUTPUT || "/dev/null",
-            "released=false\n"
+            process.env.GITHUB_OUTPUT || '/dev/null',
+            'released=false\n'
         );
 
         return;
@@ -207,12 +207,12 @@ function main() {
     updateManifest(newVersion);
 
     fs.appendFileSync(
-        process.env.GITHUB_OUTPUT || "/dev/null",
+        process.env.GITHUB_OUTPUT || '/dev/null',
         [
-            "released=true",
+            'released=true',
             `version=${newVersion}`,
             `bump=${bump}`,
-        ].join("\n") + "\n"
+        ].join('\n') + '\n'
     );
 }
 

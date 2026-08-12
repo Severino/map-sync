@@ -16,7 +16,7 @@ let packageJson = null;
 let manifest = null;
 let db = null;
 const legacyInfoPath = join('App', 'info.xml');
-const infoName = 'manifest.xml';
+const infoName = 'plugin.xml';
 const infoPath = join(infoName);
 
 

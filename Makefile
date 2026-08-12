@@ -17,7 +17,6 @@ npm_init:
 
 npm_build:
 	npx vite build	
-#./node_modules/.bin/vue-cli-service build --target lib --name $(package_name) ./src/main.js --mode production
 
 # remove build dir
 clean:
@@ -35,6 +34,7 @@ package: clean
 	[ -d Migration ] && rsync -zah Migration $(build_src)/$(plugin_name)/ || true
 	[ -d routes ] && rsync -zah routes $(build_src)/$(plugin_name)/ || true
 	# Copy files if they exist
+	[ -f $(root_dir)/plugin.xml ] && cp $(root_dir)/plugin.xml $(build_src)/$(plugin_name)/ || true
 	[ -f $(dst_dir)/$(plugin_name).umd.js ] && cp $(dst_dir)/$(plugin_name).umd.js $(build_src)/$(plugin_name)/ || true
 	[ -f $(root_dir)/CHANGELOG.md ] && cp $(root_dir)/CHANGELOG.md $(build_src)/$(plugin_name)/ || true
 	mkdir -p $(build_src)/$(plugin_name)/js
